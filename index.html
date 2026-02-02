@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Stemma Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+  background:#000;
+  color:#fff;
+  font-family: system-ui, sans-serif;
+}
+
+.stemma-green{ color:#39B54A; }
+
+.badge-warn{
+  background:#b45309;
+  color:#fff;
+  font-size:10px;
+  padding:2px 6px;
+  border-radius:4px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="max-w-[1800px] mx-auto p-4">
+
+<!-- ================= HEADER ================= -->
+
+<header class="mb-6 flex items-center gap-3">
+
+<img
+  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAt1BMVEUAAAAK9RQAAQAAAAMEAAAAAQMDAAQJ9hIK+hQAAgAAAAUM9BYGAAAK/xQEAAYAAwAM7RUIewwHrg0GdgoI4xMJuxAHUgkIpQ0LtBAN3RAGQwsJyBAHSQwKqw4JnA0HuBEGjwoIIAgGOwgFGgIN2BMHjAwFXQ0DoQUJzQkKgAoDFQQGMwsHVgsGjQ0GhQYFDwQIawsIlgsGKQUKZg4FUAMCLAsIbggAEwgCMgIDIQQDQAwDFwAGTQy7+zBxAAAP9UlEQVR4nO1cC3fbtg6m+ABpSlScxKmTOK+mzquPPNeuXfv/f9cFJD8kEt7tYiddz/jt7JxNUiSCAIEPIGghMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL+M9B1fXJ6JurBQKtVzxgwcqDF2d641lIBvOb41kf9tgjO2cPa+K1Vz0ghAY7oOXcOBmX9vTC0Bf4TjqpKrnpEG/BHoSwt/oP/t/K5fycenC2LsijcOzCrnpFGvLP4HMroxl7+VhKCR73YAmGnolr9WDV1RQMbaj14xQGuCW3EtrOoQ0K48KueA3UbihnCmfidPI3SE2eLRkI0wJU6VJWbC4i6Nitn4t8HKXRo5cORW7ez6jE1DnYhYhAro8q/DwO4XFgfLTHwTCAACTrYhYTW7b7+QJ8NDVdL80N3OtapAUrpxbEry+VTx7/ROvR+z3YktE6kEUOB8N1pKIvr+leM9XmQFO47CLeCi4k3c2/Urlf7G+lQQOhJaEd1Es1xFY76D4X3v2Koz8SHUHYHX4Y3qX78H6H3TBk+/oKRPhe7fQkxYCTO1Igd13umdDe/Yqh/h7+hkZ9czwCRwCWxTmsbPeMenvWtF4M3tb+5vasUyJRPnri+Dstw73HldR9RTyGWMGEG2hiMM98/XdTpOn55aP8jIPZQ1pSL7PQlLEt3Clr18kS93zNS0vNe/BqjUcAJpo/h6VcwuopUULrhkU68iNqLJMT/9aD6eihtLOF18h4ljkrKwqy7e0FJVgAeaK3hx8PH1E9e90ePj4WnSMDLvjOibPkgfo1Wb9CUMT0u3fjlJFmJg5kUZfgBRvYj+jSSkDiZkQtrVphGjPtqJkWPuq8wEkD9mAcUN8RLr1zluJvrwBbuEVRfwgMbDb+wQ7F0SFoZGMWPlHbYfYVCSvBtnqFgsPxs1CtL+BTmH7d2BND/ejJ8ZG53S2MeKEwriuiZSEJUIXI/O7dgt804tJfFp7mV4UDdJKoiDVMJ3a1ZzAL+x22wZfSMtdEn0F/Z+TS6E7Tb15BriSu3dIZl+KLAdOqinIR7sLivhd9z8QMYELvvN+K+y+rcDrx2La6b2+FSBGE6c8xIaItlDq+SWJFKKOoeL3L7r05sdjoS4uAm2ui/lbAIbxe3TfUuJPcx8PQ+MOk5W3eqX1tCpCTLCgT6uifVyXI5Cd3t4jaI28RIYwmfQtHT4emLGKnWEgZEPL1MPPVxJ3slIYe6s+8wSmyQ7Gz5Dr2TSGiLpS9VpqZX9HUYD8Abslukx+sEESS+TZjlCknHrjcCqncuAx4jYVkugwGwU1AsHkA++gl9bU+HO5GR6i3d0EVUwcqa+v+HNFBfjsdPokrfchIiS7R+qcNpaoQ4B8s6TN+LzKbALjiN0jUuwl40cePISpU0Hu6Px180rFErB6n3iNlj5paE24tYiHC81PQ0pmQ0A+Fy8d6YlDYSugUvleSpIx2eRBLi5J84GtxkHTNVmKw3Hw/DP0Tdj7i7rq/D0oa7equN6k3FOxagDA/Ct9PtH1hHM52/W9chpu7uplryWlx7Bt4M24fCxfMFxDU4NzeHy0z0crTDWA0lhqwtaGfhNJUAY+Yp2nE73/uMjpEZzd/tk/voq2E5wVIpfRbmezqjNXQIop0m4p5hr1/OfB/rkLaPxGzvIXWVGFEaX9nqgeGtOEMLd1mHIr4fHjsmZABXz+wVtru+/zGqzzNFWRxfuIbeYoyEwHXjjv2MuV0xngZpga9bhwjMbfzzRRUjnaAygJcd1ndNrnbGWcOb50tojrrbD+gJMOtZ3DtIBxl8a0rwwHgS1MOh3mrun6eMBpWG5Lp5cU3bOv1SaifvkEJ6XDzL+5h2PF9C+NhZ8TiEabc6z6w1HGNrSgxlIQlvZ0nWDTcB5aLWdpKuUreo4ci6rq5DlzGGdSQ8X0pI3ht9wXIxMP7QlrNdzntGSRTTfPvnV5yjKduRglDD2BGjFJ0qhpossqqiLZA8X0L02p2v4GIMVwu/Ze4ZPYXtNlqcs1bqTqEtt506ztO08VKZ7ThU0J8u9GSqk37yjOn/8yVUVV8XKOKurttdFnOXSlFiSEMtGXXH6tAe0I6T9HpqE19J735s3iuuGeMIH5p76Af8l6jOWoQ1dnS2Ev5o0Vu0FWAQiTHRKA+V1FoLhpUhnDbUUwI4N8z9mdc/5NyQbWxDCQlHSSQZrm5n+QlEqTg5tbrlqAbYNH2/2hJSpkuplfA7imjEXcSqZ3/bJE9S7TPW766bOItUWw+tje+tIR9E7sRSweS6ZdiKczUoYl15aZC2cRKGjzTGtgia3m1pKTDqt27cdDtgtEU+2J+d0l2tIaEWPxKTseECBt4oyUa1ItxgQJHAKaKhkFRYTUh7K8UeeloN25yTmpH2rfo2+WYZ7teQEE0jmVFc2Y+1RAn5xWanmpqbOFLTxEvMjDDeMfeQ0igwW4LzQvMlCt8Y8ddxNDgan5gbxqID8Frjvbh2337wDt2luOEl3CdXyyT4jYRn1KVyl1YZi2W9/4AJpNM1EmChjT6LR4OrIJwgwwbgdYGJHPLXj3y4mAhytCsW6Rf0XurBxZ6E3jlu9fTgUg9F33u+hMh1v3FeAaMTridkPIxBUdAz+s9VAZHeecDp3oavIGr+XrikfQD1gV34f7FdED+rQyXrKZL+ZN6muC78ALioVoavlAQymiAxVCWl5v6soOYwKVghaBkq4dnaiB2pteo0qKkHxvSRQgKONI6W7T2L9Fv7dPeJhhMEZWC8fkdEBpgIhLeuBfGIXe7vMFass59hwMBb7r1ND5D2N3E1qvkmmaJgwwVleQCep+V7wmjeSNEHgQTeLMK5NmvuScGUeTM1V9AWOych8UulSPUpq8NbWn3jJUT3pZnpxJeE98g96mMuIbEHG9hy+8IwbBzrN2Wkn6TSI605Q/1ehtTtUQ7cJB6chGFX0YZWch3fN8W0UjH7AEWvkP58HXKBHWWeVGg4Z+m82sJNaoprnISO+McTLyH653rCOaF2Y40NMXatcD+HOuYm1oYjzBOYoIDJafACKo57l80m4g27si0oVbPVjXCuNKUU3Jrf34CAIN6TOtI1NUUz5XI5VMc9DPSEiaPIW9BfJiSifV0t492YmegjjRkJy5+K8HUTO9+e9rlSJoUpuR7wJJqKZoYptjSlmBURwY3R6zPWgnceMK+/5FfhtVh5luPnYSjBYHSI+Twoz8Y2akU0l4HxQk30Ysle2EXtjji9h0cFvK0U4Wn1eZyfhx5ocV2kbsNSndKQMTJfrozWIdV7YUlTY1bC7wKSWn7zJ7gaxBvuDpHAdXZluuBsBBNRpBoYS4pUV0iiqa7N6PAY88pUQuoJEqDZCp3bFqwjpRr1F5DrJBZdcHtJJTl4VbEu7tiD32eCTLMLyOiwdBPMEDjlEl2tPnMUvyhGWpgNSQiMEksc1h5odczmc5UAJkVcKWFhH7RgKZvbU5ra5Dj6QOnWZgQUikl2ySk4TIO5tLsIRvgthgutktCG89pUXM0gHGkA3pHiKpRmQ21EWvzFMdAiPIDWTBZRYpA2epgK4o7ZmFC60mvxlaMPIy4Lbz9+ucHOdxVV0hcjHqJ/2GWYm7vVxjALsZEw1aHF5F8qrj/D3YBg6RGmVLDJ5gzZ1DiZeaTmc2YA6Gqk2E7rYtREqRhfGi5Ae7Z8I5TmKyLh6ybPnGoF+oqh0qU71cBsWdtiin+jGQmvhKiZOlx4q4RmiJm78kowttDwpsGmIsUcSbG5GbJHUVwRsbqSTocYT0Qk6hU+wzWdLit0GlLVXHPDHfoZbsccP1BvukcK7hmnacOu0IBmF3ctOI2h/SSeE2pWECqV0I5BNbsZ8fV9LTyTn1IZhZoVNiuhYgga8opTkPVdXGlHyX/g9z+EyDvhwNBppfUW5H8Dc5Qys/C1UnCa2k7TEr45PjOH1xzbcl4N6p0oktkiINdS+iAm7OGNApVsLtEWtopPoRQU7VFPimH9RXgE47c23DPsB5A6R4pKStZxSC6Ldsf6JOIiFvMErR7jp93Yg8HlGZ9CCd/Qw32MGBud/A6361SBVwPSEn+T14FUiaNve+sfQ2yllWp6SfojDoeA/HIcn0IhRz3QSWyxhZv6lzjIh07T14xbOwAl4wKhnZUXVFTDLZ3YkkZHynLDms5GR6dQ0NKbMxbTqEOQqmDf9dYLNH3jGEA/pX4teBAD/9ATEee/6Z2Am74wdkQb1f2NZduUNnTT1d2TJIwrMJCmmWXYBXixw5jqOBRRNhyOcNSg6RcUlv0R5ayDq+rr0O1VVDPolcrtfHssKqC7EmgH7yhxS+H0BU9igtHTOJGxZ8h4wPeipS3aEz7e7/QextVJnU29Mgaqu/WJUTBCb6xrVSWFILSDFzyWgGSzKqNaCpJpGGBo6rZl21mfodL9+rbbBumN6AXEMhy2ca1P2vAFNVJrEyci1r2vXlBC2sc4j/ipnWippK/eda7PrVQNoOd+w3cM09r3elHsdFZr6Vtp+CoUrdnYfYcfG2drMaheX3bW3KKzt1vonZ20wyRxUckl1Q9nsz+a9fnTnXDp5+uw0xkfPtElCf28n/p5Xr5jf1Dd9DdN5+2dndyAuk7oEvViTuaMrizCTt2KeDy7Rm+ZmvYXP6ATU61rm2kTvxvOXuFYidL1p66hznUIdb0gkChh02eIo/GP8/NRVAvXbQPnvLZN1zDat1PUKSFbVxtOwnAiXuP3T2BLXXS5ykxCs6WXhJOsiSREM62uZl24qHjh20OIqvObGdq3eZ7q8NLwUTfXIisNJ3r1b91sGNvBzo3PTpaXKWTQCqOe7+WMjFxLnpetPfqkISplQ2dmWPgfXGw3Yn4WjlqPSpodtI9wsfqHbjYM6cWldWW7GMPJch8dbhv7tRa53Hy9ePGtcSElnY2ao7b08zXWhfNlRy5MZx3XmEQO2n5goJ1W27RF4hpco8nyHwOUfjedGVV4vzx7KM1u250cOr9TYsSRozJWuPcLqVuCYNEaF45Dqy+h9SYXdaXaX8UCCX82c4ZvHH2oX8tCadADAHFjAyoiXHX3DgCOhgFVM1nWwRQI+HwQHJreIlJLXW/jldGhWF4zirrTXSjfwAB5daPbAfq1E7zogjtDavjKJ7swEGxPhgfbfZKILGR7b3IRHdlV9dePde+8hhT1/WH8yvrienJTR6qCm2l5ffvaZ4AJuvm3Ts7J00kptLLeMFElmn5wp3uN+80koN/Gkv2QB4JY2iZ20f4xdG0U8+NViria6kuj9cC3h80615hRN7+hsNWXkALEIPo9hteBkRJn2ydrgy5istwbvWmPwfWelSY98dduJcWCY4It1ul7ysjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMj4z+F/DijWfC5kSRIAAAAASUVORK5CYII="
+  class="w-10 h-10 rounded"
+/>
+
+<h1 class="text-xl font-bold stemma-green">
+  Stemma Dashboard
+</h1>
+
+</header>
+
+
+<!-- ================= PROGRAM GRID ================= -->
+
+<section class="border border-gray-700 rounded">
+
+<div class="px-4 py-2 border-b border-gray-700 stemma-green font-semibold text-sm">
+  Stemma Programs
+</div>
+
+<div
+  id="programGrid"
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
+</div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* ================= CONFIG ================= */
+
+const API_KEY = 'AIzaSyD8S6q4rRO_e-A2uk2lAfD2_L0JV2JfQm8';
+const CHANNEL_ID = 'UCbIIzoBpRfVXA4YFRVA3osQ';
+
+/* Fixed order = layout */
+const PROGRAMS = [
+  'Stemma Podcast',
+  'Stemma Performance',
+  'Radar Stemma',
+  'Girls Who Run',
+
+  'Café com Tri',
+  'Na Roda do Stemma',
+  'Natação Stemma',
+  'Especiais'
+];
+
+
+/* Playlist matching keywords */
+const PROGRAM_RULES = {
+
+  'Stemma Podcast': ['podcast'],
+  'Stemma Performance': ['performance'],
+  'Radar Stemma': ['radar'],
+  'Girls Who Run': ['girls'],
+  'Café com Tri': ['tri','cafe'],
+  'Na Roda do Stemma': ['roda'],
+  'Natação Stemma': ['nata']
+
+};
+
+
+/* ================= CACHE ================= */
+
+const CACHE_KEY = 'stemma_cache_v5';
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+
+
+/* ================= UTILS ================= */
+
+async function fetchJSON(url){
+
+  try{
+
+    const r = await fetch(url);
+
+    if(!r.ok){
+      console.error('HTTP', r.status);
+      return null;
+    }
+
+    return await r.json();
+
+  }catch{
+    return null;
+  }
+}
+
+
+function escapeHTML(s){
+
+  return s.replace(/[&<>"']/g,c=>({
+
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+
+  }[c]));
+}
+
+
+function formatDate(d){
+  return new Date(d).toLocaleDateString();
+}
+
+
+/* ================= EPISODE PARSER ================= */
+
+function extractEpisodeNumber(title){
+
+  const patterns = [
+    /ep\.?\s*(\d+)/i,
+    /epis[oó]dio\s*(\d+)/i,
+    /#\s*(\d+)/,
+    /\b(\d{1,4})\b/
+  ];
+
+  for(const p of patterns){
+
+    const m = title.match(p);
+
+    if(m) return parseInt(m[1],10);
+  }
+
+  return null;
+}
+
+
+/* ================= CACHE ================= */
+
+function getCache(){
+
+  try{
+
+    const raw = localStorage.getItem(CACHE_KEY);
+
+    if(!raw) return null;
+
+    const obj = JSON.parse(raw);
+
+    if(Date.now() - obj.time > CACHE_TTL){
+
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+
+    return obj.data;
+
+  }catch{
+    return null;
+  }
+}
+
+
+function setCache(data){
+
+  try{
+
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        time: Date.now(),
+        data
+      })
+    );
+
+  }catch{}
+}
+
+
+/* ================= YOUTUBE ================= */
+
+async function getAllPlaylists(){
+
+  let all=[], token=null;
+
+  do{
+
+    const url=new URL(
+      'https://www.googleapis.com/youtube/v3/playlists'
+    );
+
+    url.search=new URLSearchParams({
+      part:'snippet',
+      channelId:CHANNEL_ID,
+      maxResults:50,
+      key:API_KEY,
+      ...(token?{pageToken:token}:{})
+    });
+
+    const data=await fetchJSON(url);
+
+    if(!data||!data.items) break;
+
+    all=all.concat(data.items);
+
+    token=data.nextPageToken;
+
+  }while(token);
+
+  return all;
+}
+
+
+async function getVideos(pid){
+
+  let all=[], token=null;
+
+  do{
+
+    const url=new URL(
+      'https://www.googleapis.com/youtube/v3/playlistItems'
+    );
+
+    url.search=new URLSearchParams({
+      part:'snippet',
+      playlistId:pid,
+      maxResults:50,
+      key:API_KEY,
+      ...(token?{pageToken:token}:{})
+    });
+
+    const data=await fetchJSON(url);
+
+    if(!data||!data.items) break;
+
+    all=all.concat(data.items);
+
+    token=data.nextPageToken;
+
+  }while(token);
+
+  return all;
+}
+
+
+/* ================= PROGRAM RESOLUTION ================= */
+
+function resolveProgram(title){
+
+  const t=title.toLowerCase();
+
+  for(const p in PROGRAM_RULES){
+
+    for(const k of PROGRAM_RULES[p]){
+
+      if(t.includes(k)) return p;
+    }
+  }
+
+  return 'Especiais';
+}
+
+
+/* ================= VALIDATION ================= */
+
+function validatePrograms(map){
+
+  console.group('📊 Stemma Validation');
+
+  for(const p of PROGRAMS){
+
+    if(p==='Especiais') continue;
+
+    const nums=[];
+
+    map[p].forEach(v=>{
+
+      const n=extractEpisodeNumber(v.title);
+
+      if(n) nums.push(n);
+    });
+
+    nums.sort((a,b)=>a-b);
+
+    const miss=[];
+
+    for(let i=0;i<nums.length-1;i++){
+
+      if(nums[i+1]!==nums[i]+1){
+
+        for(let m=nums[i]+1;m<nums[i+1];m++)
+          miss.push(m);
+      }
+    }
+
+    if(miss.length){
+
+      console.warn(p,'missing:',miss);
+
+    }else{
+
+      console.log(p,'OK');
+    }
+  }
+
+  console.groupEnd();
+}
+
+
+/* ================= LOADER ================= */
+
+async function loadPrograms(){
+
+  const cached=getCache();
+
+  if(cached){
+    render(cached);
+    validatePrograms(cached);
+    return;
+  }
+
+
+  const playlists=await getAllPlaylists();
+
+  const map={};
+
+  PROGRAMS.forEach(p=>map[p]=[]);
+
+
+  for(const pl of playlists){
+
+    if(!pl.snippet?.title) continue;
+
+    const program=resolveProgram(pl.snippet.title);
+
+    const vids=await getVideos(pl.id);
+
+    for(const v of vids){
+
+      if(v.snippet?.resourceId?.videoId){
+
+        map[program].push(v.snippet);
+      }
+    }
+  }
+
+
+  Object.values(map).forEach(list=>{
+    list.sort((a,b)=>
+      new Date(b.publishedAt)-new Date(a.publishedAt)
+    );
+  });
+
+
+  setCache(map);
+
+  render(map);
+
+  validatePrograms(map);
+}
+
+
+/* ================= RENDER ================= */
+
+function render(map){
+
+  const grid=document.getElementById('programGrid');
+
+  grid.innerHTML='';
+
+
+  PROGRAMS.forEach(name=>{
+
+    const list=map[name]||[];
+
+    const main=list[0];
+
+    const past=list.slice(1,6);
+
+
+    grid.insertAdjacentHTML('beforeend',`
+
+      <div class="border border-gray-700 rounded p-2">
+
+        <div class="text-xs stemma-green font-semibold mb-1">
+          ${name}
+        </div>
+
+        ${
+          main
+            ? mainCard(main)
+            : '<div class="text-xs text-gray-500">No videos</div>'
+        }
+
+        <div class="border-t border-gray-700 mt-1 pt-1 space-y-1">
+          ${past.map(miniCard).join('')}
+        </div>
+
+      </div>
+    `);
+  });
+}
+
+
+function mainCard(v){
+
+  const id=v.resourceId.videoId;
+
+  const t=
+    v.thumbnails?.medium?.url||
+    v.thumbnails?.default?.url||
+    '';
+
+  return`
+
+    <a href="https://youtube.com/watch?v=${id}" target="_blank">
+
+      <img src="${t}" class="w-full rounded mb-1">
+
+      <div class="text-xs font-medium line-clamp-2">
+        ${escapeHTML(v.title)}
+      </div>
+
+      <div class="text-[10px] text-gray-400">
+        ${formatDate(v.publishedAt)}
+      </div>
+
+    </a>
+  `;
+}
+
+
+function miniCard(v){
+
+  const id=v.resourceId.videoId;
+
+  return`
+
+    <a href="https://youtube.com/watch?v=${id}"
+       target="_blank"
+       class="block text-[10px] text-gray-300 hover:text-[#39B54A] truncate">
+
+      ▶ ${escapeHTML(v.title)}
+
+    </a>
+  `;
+}
+
+
+/* ================= INIT ================= */
+
+async function init(){
+
+  if(API_KEY==='YOUR_API_KEY_HERE'){
+    alert('Insert your YouTube API key');
+    return;
+  }
+
+  await loadPrograms();
+}
+
+window.onload=init;
+
+</script>
+
+</body>
+</html>
