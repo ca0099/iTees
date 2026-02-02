@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 
 <meta charset="UTF-8">
@@ -17,14 +17,6 @@ body{
 }
 
 .stemma-green{ color:#39B54A; }
-
-.badge-warn{
-  background:#b45309;
-  color:#fff;
-  font-size:10px;
-  padding:2px 6px;
-  border-radius:4px;
-}
 </style>
 
 </head>
@@ -49,7 +41,7 @@ body{
 </header>
 
 
-<!-- ================= PROGRAM GRID ================= -->
+<!-- ================= GRID ================= -->
 
 <section class="border border-gray-700 rounded">
 
@@ -71,26 +63,21 @@ body{
 
 /* ================= CONFIG ================= */
 
-const API_KEY = 'AIzaSyD8S6q4rRO_e-A2uk2lAfD2_L0JV2JfQm8';
+const API_KEY = 'A2uk2lAfD2_L0JV2JfQm8';
 const CHANNEL_ID = 'UCbIIzoBpRfVXA4YFRVA3osQ';
 
-/* Fixed order = layout */
 const PROGRAMS = [
   'Stemma Podcast',
   'Stemma Performance',
   'Radar Stemma',
   'Girls Who Run',
-
   'Café com Tri',
   'Na Roda do Stemma',
   'Natação Stemma',
   'Especiais'
 ];
 
-
-/* Playlist matching keywords */
-const PROGRAM_RULES = {
-
+const RULES = {
   'Stemma Podcast': ['podcast'],
   'Stemma Performance': ['performance'],
   'Radar Stemma': ['radar'],
@@ -98,61 +85,17 @@ const PROGRAM_RULES = {
   'Café com Tri': ['tri','cafe'],
   'Na Roda do Stemma': ['roda'],
   'Natação Stemma': ['nata']
-
 };
 
-
-/* ================= CACHE ================= */
-
-const CACHE_KEY = 'stemma_cache_v5';
-const CACHE_TTL = 24 * 60 * 60 * 1000;
+const CACHE_KEY='stemma_cache_v6';
+const CACHE_TTL=24*60*60*1000;
 
 
 /* ================= UTILS ================= */
 
-async function fetchJSON(url){
-
-  try{
-
-    const r = await fetch(url);
-
-    if(!r.ok){
-      console.error('HTTP', r.status);
-      return null;
-    }
-
-    return await r.json();
-
-  }catch{
-    return null;
-  }
-}
-
-
-function escapeHTML(s){
-
-  return s.replace(/[&<>"']/g,c=>({
-
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":'&#39;'
-
-  }[c]));
-}
-
-
-function formatDate(d){
-  return new Date(d).toLocaleDateString();
-}
-
-
-/* ================= EPISODE PARSER ================= */
-
 function extractEpisodeNumber(title){
 
-  const patterns = [
+  const patterns=[
     /ep\.?\s*(\d+)/i,
     /epis[oó]dio\s*(\d+)/i,
     /#\s*(\d+)/,
@@ -161,7 +104,7 @@ function extractEpisodeNumber(title){
 
   for(const p of patterns){
 
-    const m = title.match(p);
+    const m=title.match(p);
 
     if(m) return parseInt(m[1],10);
   }
@@ -170,20 +113,28 @@ function extractEpisodeNumber(title){
 }
 
 
-/* ================= CACHE ================= */
+async function fetchJSON(url){
+
+  try{
+    const r=await fetch(url);
+    if(!r.ok) return null;
+    return await r.json();
+  }catch{
+    return null;
+  }
+}
+
 
 function getCache(){
 
   try{
 
-    const raw = localStorage.getItem(CACHE_KEY);
-
+    const raw=localStorage.getItem(CACHE_KEY);
     if(!raw) return null;
 
-    const obj = JSON.parse(raw);
+    const obj=JSON.parse(raw);
 
-    if(Date.now() - obj.time > CACHE_TTL){
-
+    if(Date.now()-obj.time>CACHE_TTL){
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -202,10 +153,7 @@ function setCache(data){
 
     localStorage.setItem(
       CACHE_KEY,
-      JSON.stringify({
-        time: Date.now(),
-        data
-      })
+      JSON.stringify({time:Date.now(),data})
     );
 
   }catch{}
@@ -214,9 +162,9 @@ function setCache(data){
 
 /* ================= YOUTUBE ================= */
 
-async function getAllPlaylists(){
+async function getPlaylists(){
 
-  let all=[], token=null;
+  let all=[],token=null;
 
   do{
 
@@ -234,7 +182,7 @@ async function getAllPlaylists(){
 
     const data=await fetchJSON(url);
 
-    if(!data||!data.items) break;
+    if(!data?.items) break;
 
     all=all.concat(data.items);
 
@@ -248,7 +196,7 @@ async function getAllPlaylists(){
 
 async function getVideos(pid){
 
-  let all=[], token=null;
+  let all=[],token=null;
 
   do{
 
@@ -266,7 +214,7 @@ async function getVideos(pid){
 
     const data=await fetchJSON(url);
 
-    if(!data||!data.items) break;
+    if(!data?.items) break;
 
     all=all.concat(data.items);
 
@@ -278,67 +226,21 @@ async function getVideos(pid){
 }
 
 
-/* ================= PROGRAM RESOLUTION ================= */
+/* ================= PROGRAM RESOLVE ================= */
 
 function resolveProgram(title){
 
   const t=title.toLowerCase();
 
-  for(const p in PROGRAM_RULES){
+  for(const p in RULES){
 
-    for(const k of PROGRAM_RULES[p]){
+    for(const k of RULES[p]){
 
       if(t.includes(k)) return p;
     }
   }
 
-  return 'Especiais';
-}
-
-
-/* ================= VALIDATION ================= */
-
-function validatePrograms(map){
-
-  console.group('📊 Stemma Validation');
-
-  for(const p of PROGRAMS){
-
-    if(p==='Especiais') continue;
-
-    const nums=[];
-
-    map[p].forEach(v=>{
-
-      const n=extractEpisodeNumber(v.title);
-
-      if(n) nums.push(n);
-    });
-
-    nums.sort((a,b)=>a-b);
-
-    const miss=[];
-
-    for(let i=0;i<nums.length-1;i++){
-
-      if(nums[i+1]!==nums[i]+1){
-
-        for(let m=nums[i]+1;m<nums[i+1];m++)
-          miss.push(m);
-      }
-    }
-
-    if(miss.length){
-
-      console.warn(p,'missing:',miss);
-
-    }else{
-
-      console.log(p,'OK');
-    }
-  }
-
-  console.groupEnd();
+  return null;
 }
 
 
@@ -350,12 +252,12 @@ async function loadPrograms(){
 
   if(cached){
     render(cached);
-    validatePrograms(cached);
+    validate(cached);
     return;
   }
 
 
-  const playlists=await getAllPlaylists();
+  const playlists=await getPlaylists();
 
   const map={};
 
@@ -366,16 +268,27 @@ async function loadPrograms(){
 
     if(!pl.snippet?.title) continue;
 
-    const program=resolveProgram(pl.snippet.title);
+    const base=resolveProgram(pl.snippet.title);
 
     const vids=await getVideos(pl.id);
 
+
     for(const v of vids){
 
-      if(v.snippet?.resourceId?.videoId){
+      if(!v.snippet?.resourceId?.videoId) continue;
 
-        map[program].push(v.snippet);
+      let program=base;
+
+      const ep=extractEpisodeNumber(v.snippet.title);
+
+      /* Regra: sem número → Especiais */
+      if(ep===null){
+        program='Especiais';
       }
+
+      if(!program) program='Especiais';
+
+      map[program].push(v.snippet);
     }
   }
 
@@ -391,7 +304,49 @@ async function loadPrograms(){
 
   render(map);
 
-  validatePrograms(map);
+  validate(map);
+}
+
+
+/* ================= VALIDATION ================= */
+
+function validate(map){
+
+  console.group('📊 Validação Stemma');
+
+  for(const p of PROGRAMS){
+
+    if(p==='Especiais') continue;
+
+    const nums=[];
+
+    map[p].forEach(v=>{
+      const n=extractEpisodeNumber(v.title);
+      if(n) nums.push(n);
+    });
+
+    nums.sort((a,b)=>a-b);
+
+    const miss=[];
+
+    for(let i=0;i<nums.length-1;i++){
+
+      if(nums[i+1]!==nums[i]+1){
+
+        for(let m=nums[i]+1;m<nums[i+1];m++)
+
+
+        miss.push(m);
+      }
+    }
+
+    if(miss.length)
+      console.warn(p,'faltando:',miss);
+    else
+      console.log(p,'OK');
+  }
+
+  console.groupEnd();
 }
 
 
@@ -424,7 +379,7 @@ function render(map){
         ${
           main
             ? mainCard(main)
-            : '<div class="text-xs text-gray-500">No videos</div>'
+            : '<div class="text-xs text-gray-500">Sem vídeos</div>'
         }
 
         <div class="border-t border-gray-700 mt-1 pt-1 space-y-1">
@@ -453,11 +408,11 @@ function mainCard(v){
       <img src="${t}" class="w-full rounded mb-1">
 
       <div class="text-xs font-medium line-clamp-2">
-        ${escapeHTML(v.title)}
+        ${v.title}
       </div>
 
       <div class="text-[10px] text-gray-400">
-        ${formatDate(v.publishedAt)}
+        ${new Date(v.publishedAt).toLocaleDateString()}
       </div>
 
     </a>
@@ -475,7 +430,7 @@ function miniCard(v){
        target="_blank"
        class="block text-[10px] text-gray-300 hover:text-[#39B54A] truncate">
 
-      ▶ ${escapeHTML(v.title)}
+      ▶ ${v.title}
 
     </a>
   `;
@@ -484,17 +439,15 @@ function miniCard(v){
 
 /* ================= INIT ================= */
 
-async function init(){
+window.onload=()=>{
 
-  if(API_KEY==='YOUR_API_KEY_HERE'){
-    alert('Insert your YouTube API key');
+  if(API_KEY==='SUA_API_KEY_AQUI'){
+    alert('Coloque sua API Key do YouTube');
     return;
   }
 
-  await loadPrograms();
-}
-
-window.onload=init;
+  loadPrograms();
+};
 
 </script>
 
